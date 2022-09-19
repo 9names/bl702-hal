@@ -1,15 +1,15 @@
 [package]
 name = "bl702-hal"
-version = "0.1.0"
+version = "0.0.1"
 edition = "2021"
 license = "MIT OR MulanPSL-2.0"
 keywords = ["hal", "bl702", "riscv"]
 categories = ["embedded", "no-std", "hardware-support"]
 repository = "https://github.com/9names/bl702-hal"
-description = "HAL for the bl702 microcontroller"
+description = "HAL for the Bouffalo Lab BL702 microcontroller family"
 
 [dependencies]
-bl702-pac = { git = "https://github.com/9names/bl702-pac", branch = "main" }
+bl702-pac = "0.0.1"
 embedded-hal = "=1.0.0-alpha.5"
 embedded-time = "0.12.0"
 riscv = "0.8.0"

@@ -11,14 +11,7 @@ use embedded_hal::delay::blocking::DelayMs;
 #[riscv_rt::entry]
 fn main() -> ! {
     let dp = pac::Peripherals::take().unwrap();
-    let mut parts = dp.GLB.split();
-
-    // // Set up all the clocks we need
-    // let clocks = Strict::new()
-    //     .use_pll(40_000_000u32.Hz())
-    //     .sys_clk(SysclkFreq::Pll160Mhz)
-    //     .uart_clk(UART_PLL_FREQ.Hz())
-    //     .freeze(&mut parts.clk_cfg);
+    let parts = dp.GLB.split();
 
     let mut gpio2 = parts.pin2.into_pull_up_output();
 
