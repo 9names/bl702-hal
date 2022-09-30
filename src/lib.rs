@@ -33,6 +33,7 @@
 
 pub use bl702_pac as pac;
 
+pub mod clock;
 pub mod delay;
 pub mod gpio;
 pub mod prelude {
