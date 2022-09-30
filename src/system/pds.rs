@@ -1,4 +1,13 @@
 use crate::system::romfunc::{data::ROM_API_INDEX_e, rom_fn_ptr};
+use bl702_pac;
+
+/// Direct register pointer.
+///
+/// # Safety
+/// only use this to access registers you already have exclusive access to
+pub unsafe fn ptr() -> &'static bl702_pac::pds::RegisterBlock {
+    &*bl702_pac::PDS::ptr()
+}
 
 /// PLL XTAL type definition
 #[repr(C)]

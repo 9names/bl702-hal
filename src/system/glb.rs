@@ -132,3 +132,62 @@ pub fn GLB_Set_System_CLK_Div(clkDiv: u8, bclkDiv: u8) -> BL_Err_Type {
 pub fn GLB_Set_MTimer_CLK(enable: u8, clkSel: GLB_MTIMER_CLK_Type, div: u8) -> BL_Err_Type {
     BL_Err_Type::SUCCESS
 }
+
+pub enum BL_AHB_Slave1_Type {
+    GLB = 0x00,
+    MIX = 0x01,
+    GPIP = 0x02,
+    SEC_DBG = 0x03,
+    SEC = 0x04,
+    TZ1 = 0x05,
+    TZ2 = 0x06,
+    EFUSE = 0x07,
+    CCI = 0x08,
+    L1C = 0x09,
+    S1A_ALL = 0x0A,
+    SFC = 0x0B,
+    DMA = 0x0C,
+    EMAC = 0x0D,
+    PDS_HBN_AON_HBNRAM = 0x0E,
+    RSVD0F = 0x0F,
+    UART0 = 0x10,
+    UART1 = 0x11,
+    SPI = 0x12,
+    I2C = 0x13,
+    PWM = 0x14,
+    TMR = 0x15,
+    IRR = 0x16,
+    CKS = 0x17,
+    QDEC = 0x18,
+    KYS = 0x19,
+    I2S = 0x1A,
+    RSVD1B = 0x1B,
+    USB = 0x1C,
+    CAM = 0x1D,
+    MJPEG = 0x1E,
+    MAX = 0x1F,
+}
+
+pub fn peripheral_clock_gate_all()
+{
+    unsafe {
+        ptr().cgen_cfg1.modify(|r,w| {
+            w.tz1().clear_bit();
+            w.tz2().clear_bit();
+            w.dma().clear_bit();
+            w.emac().clear_bit();
+            w.uart0().clear_bit();
+            w.uart1().clear_bit();
+            w.spi().clear_bit();
+            w.i2c().clear_bit();
+            w.pwm().clear_bit();
+            w.tmr().clear_bit();
+            w.irr().clear_bit();
+            w.cks().clear_bit();
+            w.usb().clear_bit();
+            w.cam().clear_bit();
+            w.mjpeg().clear_bit();
+            w
+        });
+    }
+}
