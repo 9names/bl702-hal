@@ -35,12 +35,11 @@ pub use bl702_pac as pac;
 
 pub mod delay;
 pub mod gpio;
-
-/// HAL crate prelude
 pub mod prelude {
     pub use crate::gpio::GlbExt as _bl702_hal_gpio_GlbExt;
     pub use embedded_time::rate::Extensions;
 }
+pub mod system;
 
 /// System frequency (constant since we don't have clocks yet)
 pub const SYSFREQ: u32 = 144_000_000;
