@@ -1,5 +1,5 @@
 use crate::system::{
-    glb::*,
+    glb::{*, self},
     hbn::{
         HBN_32K_CLK_Type, HBN_32K_Sel, HBN_Power_On_Xtal_32K, HBN_Set_XCLK_CLK_Sel,
         HBN_XCLK_CLK_Type,
@@ -84,7 +84,7 @@ fn mtimer_get_clk_src_div() -> u32 {
     return system_clock_get(system_clock_type::SYSTEM_CLOCK_BCLK) / 1000 / 1000 - 1;
 }
 
-fn system_clock_init() {
+pub fn system_clock_init() {
     // /*select root clock*/
     GLB_Set_System_CLK(
         GLB_DLL_XTAL_Type::GLB_DLL_XTAL_32M,
@@ -107,17 +107,21 @@ fn system_clock_init() {
     HBN_Set_XCLK_CLK_Sel(HBN_XCLK_CLK_Type::HBN_XCLK_CLK_XTAL);
 }
 
-// static void board_clock_init(void)
-// {
-//     system_clock_init();
-//     peripheral_clock_init();
-// }
+pub fn peripheral_clock_init() {
+    peripheral_clock_gate_all();
+    unsafe { glb::ptr().cgen_cfg1.modify(|r,w|{
+            w.uart0().set_bit();
+            w.uart1().set_bit();
+            w
+        });
+    }
+}
 
-// void board_init(void)
-// {
-//     board_clock_init();
-//     board_pin_mux_init();
-// }
+pub fn board_clock_init() {
+    system_clock_init();
+    peripheral_clock_init();
+}
+
 
 // void bl_show_flashinfo(void)
 // {

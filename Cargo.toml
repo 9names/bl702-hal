@@ -9,7 +9,7 @@ repository = "https://github.com/9names/bl702-hal"
 description = "HAL for the Bouffalo Lab BL702 microcontroller family"
 
 [dependencies]
-bl702-pac = "0.0.1"
+bl702-pac = { git = "https://github.com/9names/bl702-pac", rev = "9a63d2b"}
 embedded-hal = "=1.0.0-alpha.5"
 embedded-time = "0.12.0"
 riscv = "0.8.0"
