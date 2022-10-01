@@ -1,9 +1,25 @@
-[target.riscv32imac-unknown-none-elf]
-rustflags = [
-  "-C", "link-arg=-Tmemory.x",
-  "-C", "link-arg=-Tlink.x",
-  "-C", "link-arg=-Thal_defaults.x",
-]
+#[target.riscv32imac-unknown-none-elf]
+
 
 [build]
 target = "riscv32imac-unknown-none-elf"
+
+
+# cargo build/run
+[profile.dev]
+codegen-units = 1
+debug = 2
+debug-assertions = true
+incremental = false
+opt-level = 1
+overflow-checks = true
+
+# cargo build/run --release
+[profile.release]
+codegen-units = 1
+debug = 2
+debug-assertions = false
+incremental = false
+lto = 'fat'
+opt-level = 'z'
+overflow-checks = false
