@@ -1,9 +1,10 @@
 use crate::system::{
-    glb::{*, self},
+    glb::{self, *},
     hbn::{
-        HBN_32K_CLK_Type, HBN_32K_Sel, HBN_Power_On_Xtal_32K, HBN_Set_XCLK_CLK_Sel,
+        self, HBN_32K_CLK_Type, HBN_32K_Sel, HBN_Power_On_Xtal_32K, HBN_Set_XCLK_CLK_Sel,
         HBN_XCLK_CLK_Type,
     },
+    pds,
 };
 
 // const ROOT_CLOCK_SOURCE_XCLK:usize = 0;
@@ -109,7 +110,8 @@ pub fn system_clock_init() {
 
 pub fn peripheral_clock_init() {
     peripheral_clock_gate_all();
-    unsafe { glb::ptr().cgen_cfg1.modify(|r,w|{
+    unsafe {
+        glb::ptr().cgen_cfg1.modify(|r, w| {
             w.uart0().set_bit();
             w.uart1().set_bit();
             w
@@ -122,6 +124,109 @@ pub fn board_clock_init() {
     peripheral_clock_init();
 }
 
+pub fn SystemInit() {
+    unsafe { riscv::interrupt::disable() };
+    let pds = unsafe { pds::ptr() };
+    let glb = unsafe { glb::ptr() };
+    let hbn = unsafe { hbn::ptr() };
+    let efuse0 = unsafe { &*bl702_pac::EF_DATA_0::ptr() };
+    pds.pds_int.modify(|_r, w| {
+        w.cr_pds_wake_int_mask().set_bit(); // mask pds wakeup
+        w.cr_pds_rf_done_int_mask().set_bit(); // mask rf done
+        w.cr_pds_pll_done_int_mask().set_bit(); // mask all pds wakeup source int
+        unsafe {
+            w.cr_pds_wakeup_src_en().bits(0);
+        }
+        w
+        // w.cr_pds_int_clr()
+    });
+
+    /* GLB_Set_EM_Sel(GLB_EM_0KB); */
+    glb.seam_misc.modify(|_r, w| {
+        unsafe { w.em_sel().bits(0) };
+        w
+    });
+
+    /* Restore default setting*/
+    /* GLB_UART_Sig_Swap_Set(UART_SIG_SWAP_NONE); */
+    glb.glb_parm.modify(|_r, w| {
+        unsafe {
+            w.uart_swap_set().bits(0);
+        }
+        w
+    });
+
+    /* fix 57.6M */
+    if system_frequency() == 57 * 6000 * 1000 {
+        unsafe {
+            hbn.hbn_rsv2.write_with_zero(|w| {
+                // Add 0.5 for const rounding
+                w.hbn_rsv2().bits((57.6 * 1000.0 * 1000.0 + 0.5) as u32);
+                w
+            });
+        }
+    }
+
+    const CLIC_HART0_ADDR: usize = 0x02800000;
+    const CLIC_INTIP: usize = 0x000;
+    const CLIC_INTIE: usize = 0x400;
+    const IRQ_NUM_BASE: usize = 16;
+    const IRQ_QTY: usize = 64;
+    const IRQ_ITER_END: usize = (IRQ_NUM_BASE + IRQ_QTY + 2) / 4;
+    // TODO: create HAL CLIC interface rather than interact directly here
+    let clic_e = (CLIC_HART0_ADDR + CLIC_INTIE) as *mut usize;
+    for i in 0..IRQ_ITER_END {
+        unsafe { clic_e.wrapping_add(i).write_volatile(0) };
+    }
+    let clic_p = (CLIC_HART0_ADDR + CLIC_INTIP) as *mut usize;
+    for i in 0..IRQ_ITER_END {
+        unsafe { clic_p.wrapping_add(i).write_volatile(0) };
+    }
+
+    // TODO: update SVD with these fields
+    let fuse = efuse0.ef_key_slot_5_w2.read().ef_key_slot_5_w2().bits();
+    let flash_cfg = (fuse >> 26) & 7;
+    let psram_cfg = (fuse >> 24) & 3;
+
+    let is_internal_flash = flash_cfg == 1 || flash_cfg == 2;
+    let is_internal_psram = psram_cfg == 1;
+
+    glb.gpio_use_psram__io.modify(|_r, w| {
+        unsafe {
+            if is_internal_flash && !is_internal_psram {
+                w.bits(0x3f);
+            } else {
+                w.bits(0);
+            }
+        }
+        w
+    });
+
+    // TODO: register USB handler (if this isn't done at link time)
+    // #ifdef BFLB_EFLASH_LOADER
+    //     Interrupt_Handler_Register(USB_IRQn, USB_DoNothing_IRQHandler);
+    // #endif
+
+    // HBN_BOR_CFG_Type borCfg = { 0 /* pu_bor */, 0 /* irq_bor_en */, 1 /* bor_vth */, 0 /* bor_sel */ };
+    hbn.hbn_irq_mode.modify(|_r, w| {
+        w.irq_bor_en().clear_bit();
+        w
+    });
+
+    hbn.hbn_misc.modify(|_r, w| {
+        w.pu_bor().clear_bit();
+        w.bor_vth().set_bit();
+        w.bor_sel().clear_bit();
+        w
+    });
+
+    unsafe { riscv::interrupt::enable() };
+}
+
+pub fn system_frequency() -> u32 {
+    let hbn = unsafe { &*bl702_pac::HBN::ptr() };
+    hbn.hbn_rsv2.read().hbn_rsv2().bits()
+}
 
 // void bl_show_flashinfo(void)
 // {
