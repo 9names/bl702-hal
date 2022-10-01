@@ -23,7 +23,6 @@ fn main() {
         )
         .unwrap();
 
-        println!("cargo:rustc-link-lib=static={}", name);
         println!("cargo:rustc-link-search={}", out_dir.display());
 
         // Put the linker script somewhere the linker can find it
@@ -39,7 +38,16 @@ fn main() {
         println!("cargo:rustc-link-search={}", out_dir.display());
     }
 
+    // Either link the run from RAM linker script or the standard run from flash one
+    #[cfg(not(feature = "ramexec"))]
+    println!("cargo:rustc-link-arg-examples=-Tmemory.x");
+    #[cfg(feature = "ramexec")]
+    println!("cargo:rustc-link-arg-examples=-Trun_from_ram.x");
+
+    println!("cargo:rustc-link-arg-examples=-Tlink.x");
+    println!("cargo:rustc-link-arg-examples=-Thal_defaults.x");
     println!("cargo:rerun-if-changed=build.rs");
     println!("cargo:rerun-if-changed=hal_defaults.x");
     println!("cargo:rerun-if-changed=memory.x");
+    println!("cargo:rerun-if-changed=run_from_ram.x");
 }
