@@ -168,10 +168,9 @@ pub enum BL_AHB_Slave1_Type {
     MAX = 0x1F,
 }
 
-pub fn peripheral_clock_gate_all()
-{
+pub fn peripheral_clock_gate_all() {
     unsafe {
-        ptr().cgen_cfg1.modify(|r,w| {
+        ptr().cgen_cfg1.modify(|r, w| {
             w.tz1().clear_bit();
             w.tz2().clear_bit();
             w.dma().clear_bit();
