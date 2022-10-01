@@ -1,4 +1,13 @@
 use super::BL_Err_Type;
+use crate::pac;
+
+/// Direct register pointer.
+///
+/// # Safety
+/// only use this to access registers you already have exclusive access to
+pub unsafe fn ptr() -> &'static bl702_pac::hbn::RegisterBlock {
+    &*pac::HBN::ptr()
+}
 
 /// brief HBN UART clock type definition
 #[repr(C)]
