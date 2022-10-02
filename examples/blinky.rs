@@ -21,8 +21,7 @@ fn main() -> ! {
     board_clock_init();
     let dp = pac::Peripherals::take().unwrap();
     let mut parts = dp.GLB.split();
-    let clocks = ClockConfig::new()
-        .freeze(&mut parts.clk_cfg);
+    let clocks = ClockConfig::new().freeze(&mut parts.clk_cfg);
 
     let mut gpio17 = parts.pin17.into_pull_up_output();
 
