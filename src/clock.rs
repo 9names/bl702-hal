@@ -1,13 +1,14 @@
 #![allow(non_camel_case_types, non_snake_case, clippy::upper_case_acronyms)]
 
-use crate::system::{
+use embedded_time::rate::Hertz;
+use crate::{system::{
     glb::{self, *},
     hbn::{
         self, HBN_32K_CLK_Type, HBN_32K_Sel, HBN_Power_On_Xtal_32K, HBN_Set_XCLK_CLK_Sel,
         HBN_XCLK_CLK_Type,
     },
     pds,
-};
+}, gpio::ClkCfg};
 
 pub const BSP_FCLK_DIV: u8 = 0;
 pub const BSP_BCLK_DIV: u8 = 1;
@@ -28,12 +29,104 @@ pub enum system_clock_type {
     SYSTEM_CLOCK_AUPLL,
 }
 
+/// System bus frequency
+pub const SYSFREQ: u32 = 144_000_000;
+/// External high-speed crystal frequency
+pub const XTAL_FREQ: u32 = 32_000_000;
+/// UART peripheral clock frequency when PLL selected
+pub const UART_PLL_FREQ: u32 = 96_000_000;
+
+#[derive(PartialEq, Eq, Copy, Clone)]
+#[repr(u32)]
+pub enum SysclkFreq {
+    Pll144Mhz = 144_000_000,
+}
+
+
+
+/// Frozen clock frequencies
+///
+/// The existance of this value indicates that the clock configuration can no longer be changed
+#[derive(Clone, Copy)]
+pub struct Clocks {
+    sysclk: Hertz,
+    uart_clk: Hertz,
+}
+
+impl Clocks {
+    pub fn new() -> Self {
+        Clocks {
+            sysclk: Hertz(SYSFREQ),
+            uart_clk: Hertz(UART_PLL_FREQ),
+        }
+    }
+
+    pub fn sysclk(&self) -> Hertz {
+        self.sysclk
+    }
+
+    pub const fn uart_clk(&self) -> Hertz {
+        self.uart_clk
+    }
+}
+
+impl Default for Clocks {
+    fn default() -> Self {
+        Self::new()
+    }
+}
+
+pub struct ClockConfig {
+    sysclk: SysclkFreq,
+}
+
+impl ClockConfig {
+    /// Create initial clock config
+    pub fn new() -> Self {
+        ClockConfig {
+            sysclk: SysclkFreq::Pll144Mhz,
+        }
+    }
+
+    /// Calculate and balance clock registers to configure into the given clock value.
+    /// Will choose closest valid value if it can't accurately select a frequency
+    pub fn freeze(self, _clk_cfg: &mut ClkCfg) -> Clocks {
+        let pll_enabled = true;
+        let sysclk = self.sysclk;
+        let uart_clk_div = 1; // leave uart clock at 96mhz
+
+        unsafe { hbn::ptr() }
+            .hbn_glb
+            .modify(|_, w| w.hbn_uart_clk_sel().bit(pll_enabled));
+
+        // Write UART clock divider
+        unsafe { glb::ptr() }.clk_cfg2.modify(|_, w| unsafe {
+            w.uart_clk_div()
+                .bits(uart_clk_div - 1_u8)
+                .uart_clk_en()
+                .set_bit()
+        });
+
+        Clocks {
+            sysclk: Hertz(sysclk as u32),
+            uart_clk: Hertz(UART_PLL_FREQ),
+        }
+    }
+}
+
+impl Default for ClockConfig {
+    fn default() -> Self {
+        Self::new()
+    }
+}
+
 /// This is late system init, called to reconfigure clocks as per users configuration
 pub fn board_clock_init() {
     system_clock_init();
     peripheral_clock_init();
 }
 
+/// Set up core clocks
 pub fn system_clock_init() {
     // select root clock
     GLB_Set_System_CLK(
@@ -58,10 +151,12 @@ pub fn system_clock_init() {
     HBN_Set_XCLK_CLK_Sel(HBN_XCLK_CLK_Type::HBN_XCLK_CLK_XTAL);
 }
 
+/// Disable all peripheral clocks, then re-enable any that we're using  
+/// TODO: move clock enable into peripheral drivers
 pub fn peripheral_clock_init() {
     peripheral_clock_gate_all();
     unsafe {
-        glb::ptr().cgen_cfg1.modify(|r, w| {
+        glb::ptr().cgen_cfg1.modify(|_, w| {
             w.uart0().set_bit();
             w.uart1().set_bit();
             w
