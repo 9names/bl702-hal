@@ -1,14 +1,17 @@
 #![allow(non_camel_case_types, non_snake_case, clippy::upper_case_acronyms)]
 
-use embedded_time::rate::Hertz;
-use crate::{system::{
-    glb::{self, *},
-    hbn::{
-        self, HBN_32K_CLK_Type, HBN_32K_Sel, HBN_Power_On_Xtal_32K, HBN_Set_XCLK_CLK_Sel,
-        HBN_XCLK_CLK_Type,
+use crate::{
+    gpio::ClkCfg,
+    system::{
+        glb::{self, *},
+        hbn::{
+            self, HBN_32K_CLK_Type, HBN_32K_Sel, HBN_Power_On_Xtal_32K, HBN_Set_XCLK_CLK_Sel,
+            HBN_XCLK_CLK_Type,
+        },
+        pds,
     },
-    pds,
-}, gpio::ClkCfg};
+};
+use embedded_time::rate::Hertz;
 
 pub const BSP_FCLK_DIV: u8 = 0;
 pub const BSP_BCLK_DIV: u8 = 1;
@@ -41,8 +44,6 @@ pub const UART_PLL_FREQ: u32 = 96_000_000;
 pub enum SysclkFreq {
     Pll144Mhz = 144_000_000,
 }
-
-
 
 /// Frozen clock frequencies
 ///
