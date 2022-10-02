@@ -41,6 +41,7 @@ pub mod prelude {
     pub use embedded_time::rate::Extensions;
 }
 pub mod system;
+pub mod uart;
 
 /// System frequency (constant since we don't have clocks yet)
 pub const SYSFREQ: u32 = 144_000_000;
