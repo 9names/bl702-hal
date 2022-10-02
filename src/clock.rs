@@ -1,3 +1,5 @@
+#![allow(non_camel_case_types, non_snake_case, clippy::upper_case_acronyms)]
+
 use crate::system::{
     glb::{self, *},
     hbn::{
