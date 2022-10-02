@@ -1,3 +1,5 @@
+#![allow(non_camel_case_types, non_snake_case, clippy::upper_case_acronyms)]
+
 use super::BL_Err_Type;
 use crate::pac;
 
