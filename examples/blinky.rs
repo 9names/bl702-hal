@@ -3,20 +3,22 @@
 
 use bl702_hal as hal;
 use embedded_hal::digital::blocking::OutputPin;
-use hal::{delay::McycleDelay, pac, prelude::*};
+use hal::{delay::McycleDelay, pac, prelude::*, clock::{board_clock_init, system_init}};
 use panic_halt as _;
 
 use embedded_hal::delay::blocking::DelayMs;
 
 #[riscv_rt::entry]
 fn main() -> ! {
+    system_init();
+    board_clock_init();
     let dp = pac::Peripherals::take().unwrap();
     let parts = dp.GLB.split();
 
     let mut gpio17 = parts.pin17.into_pull_up_output();
 
     // Create a blocking delay function based on the current cpu frequency
-    let mut d = McycleDelay::new(bl702_hal::SYSFREQ);
+    let mut d = McycleDelay::new(bl702_hal::clock::system_frequency());
 
     loop {
         gpio17.set_high().unwrap();
