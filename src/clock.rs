@@ -179,14 +179,13 @@ fn system_clock_get(t: system_clock_type) -> u32 {
             if clksel == GLB_ROOT_CLK_Type::GLB_ROOT_CLK_RC32M
                 || clksel == GLB_ROOT_CLK_Type::GLB_ROOT_CLK_XTAL
             {
-                32 * 1000 * 1000
+                32_000_000
             } else {
                 let pll_sel = unsafe { glb::ptr().clk_cfg0.read().reg_pll_sel().bits() };
                 match pll_sel {
-                    // + 0.5 to round as a const expression
-                    0 => (57.6 * 1000.0 * 1000.0 + 0.5) as u32,
-                    1 => 96 * 1000 * 1000,
-                    2 => 144 * 1000 * 1000,
+                    0 => 57_600_000,
+                    1 => 96_000_000,
+                    2 => 144_000_000,
                     _ => 0,
                 }
             }
@@ -200,9 +199,9 @@ fn system_clock_get(t: system_clock_type) -> u32 {
                 / (GLB_Get_HCLK_Div() as u32 + 1)
                 / (GLB_Get_BCLK_Div() as u32 + 1)
         }
-        system_clock_type::SYSTEM_CLOCK_XCLK => 32000000,
-        system_clock_type::SYSTEM_CLOCK_32K_CLK => 32000,
+        system_clock_type::SYSTEM_CLOCK_XCLK => 32_000_000,
+        system_clock_type::SYSTEM_CLOCK_32K_CLK => 32_000,
         // TODO: lookup!
-        system_clock_type::SYSTEM_CLOCK_AUPLL => 12288000,
+        system_clock_type::SYSTEM_CLOCK_AUPLL => 12_288_000,
     }
 }
