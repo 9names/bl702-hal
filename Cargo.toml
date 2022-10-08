@@ -1,6 +1,6 @@
 [package]
 name = "bl702-hal"
-version = "0.0.2"
+version = "0.0.3"
 edition = "2021"
 license = "MIT OR MulanPSL-2.0"
 keywords = ["hal", "bl702", "riscv"]
