@@ -50,15 +50,10 @@ fn main() -> ! {
     // Create a blocking delay function based on the current cpu frequency
     let mut d = bl702_hal::delay::McycleDelay::new(bl702_hal::SYSFREQ);
 
-    let hello = "hello rust!\r\n";
-    let mut i = 0;
     loop {
-        d.delay_ms(100).unwrap();
-        i += 1;
-        let t = serial.write_str(hello);
-        let x = match t {
-            Ok(_) => led.set_high().unwrap(),
-            Err(_) => led.set_low().unwrap(),
-        };
+        let r = serial.read();
+        if let Ok(r) = r {
+            serial.write_char(r as char);
+        }
     }
 }
