@@ -69,7 +69,7 @@ pub enum GLB_MTIMER_CLK_Type {
 
 ///brief GLB root clock type definition
 #[repr(C)]
-#[derive(PartialEq)]
+#[derive(PartialEq, Eq)]
 pub enum GLB_ROOT_CLK_Type {
     ///root clock select RC32M
     GLB_ROOT_CLK_RC32M,
@@ -106,7 +106,8 @@ pub fn GLB_Get_BCLK_Div() -> u8 {
     }
 }
 
-pub fn GLB_Set_UART_CLK(enable: u8, clkSel: HBN_UART_CLK_Type, div: u8) -> BL_Err_Type {
+pub fn GLB_Set_UART_CLK(_enable: u8, _clkSel: HBN_UART_CLK_Type, _div: u8) -> BL_Err_Type {
+    //TODO: impl uart clock set
     BL_Err_Type::SUCCESS
 }
 
@@ -131,7 +132,8 @@ pub fn GLB_Set_System_CLK_Div(clkDiv: u8, bclkDiv: u8) -> BL_Err_Type {
     }
 }
 
-pub fn GLB_Set_MTimer_CLK(enable: u8, clkSel: GLB_MTIMER_CLK_Type, div: u8) -> BL_Err_Type {
+pub fn GLB_Set_MTimer_CLK(_enable: u8, _clkSel: GLB_MTIMER_CLK_Type, _div: u8) -> BL_Err_Type {
+    //TODO: impl MTimer_CLK
     BL_Err_Type::SUCCESS
 }
 
@@ -172,7 +174,7 @@ pub enum BL_AHB_Slave1_Type {
 
 pub fn peripheral_clock_gate_all() {
     unsafe {
-        ptr().cgen_cfg1.modify(|r, w| {
+        ptr().cgen_cfg1.modify(|_, w| {
             w.tz1().clear_bit();
             w.tz2().clear_bit();
             w.dma().clear_bit();

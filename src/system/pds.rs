@@ -46,6 +46,7 @@ pub enum PDS_PLL_CLK_Type {
 }
 
 #[inline]
+#[allow(dead_code)]
 fn pds_power_on_pll_rom(xtal: PDS_PLL_XTAL_Type) {
     let romdriver_pds_power_on_pll = unsafe {
         core::mem::transmute::<*const (), extern "C" fn(usize) -> usize>(rom_fn_ptr(
