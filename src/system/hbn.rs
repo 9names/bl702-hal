@@ -43,15 +43,18 @@ pub enum HBN_XCLK_CLK_Type {
 }
 
 // romfunc
-pub fn HBN_32K_Sel(clkType: HBN_32K_CLK_Type) -> BL_Err_Type {
+pub fn HBN_32K_Sel(_clkType: HBN_32K_CLK_Type) -> BL_Err_Type {
+    //TODO: impl HBN_32K_Sel
     BL_Err_Type::SUCCESS
 }
 
-pub fn HBN_Set_XCLK_CLK_Sel(xClk: HBN_XCLK_CLK_Type) -> BL_Err_Type {
+pub fn HBN_Set_XCLK_CLK_Sel(_xClk: HBN_XCLK_CLK_Type) -> BL_Err_Type {
+    //TODO: impl XCLK_CLK_Sel
     BL_Err_Type::SUCCESS
 }
 
 // romfunc
 pub fn HBN_Power_On_Xtal_32K() -> BL_Err_Type {
+    //TODO: impl Power_On_Xtal_32K
     BL_Err_Type::SUCCESS
 }

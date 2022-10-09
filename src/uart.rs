@@ -24,7 +24,7 @@ pub enum Error {
 }
 
 /// Serial configuration
-#[derive(Copy, Clone, Debug, PartialEq)]
+#[derive(Copy, Clone, Debug, PartialEq, Eq)]
 pub struct Config {
     pub baudrate: Baud,
     pub order: Order,
@@ -312,12 +312,24 @@ where
 
 // TODO: make these sealed instead of unsafe
 /// Serial transmit pins - DO NOT IMPLEMENT THIS TRAIT
+///
+/// # Safety
+/// DO NOT IMPLEMENT THIS TRAIT
 pub unsafe trait TxPin<UART> {}
 /// Serial receive pins - DO NOT IMPLEMENT THIS TRAIT
+///
+/// # Safety
+/// DO NOT IMPLEMENT THIS TRAIT
 pub unsafe trait RxPin<UART> {}
 /// Serial rts pins - DO NOT IMPLEMENT THIS TRAIT
+///
+/// # Safety
+/// DO NOT IMPLEMENT THIS TRAIT
 pub unsafe trait RtsPin<UART> {}
 /// Serial cts pins - DO NOT IMPLEMENT THIS TRAIT
+///
+/// # Safety
+/// DO NOT IMPLEMENT THIS TRAIT
 pub unsafe trait CtsPin<UART> {}
 
 macro_rules! impl_uart_pin {
@@ -345,6 +357,9 @@ impl_uart_pin!(
 
 /// Serial pins - DO NOT IMPLEMENT THIS TRAIT
 // TODO: make these sealed instead of unsafe
+///
+/// # Safety
+/// DO NOT IMPLEMENT THIS TRAIT
 pub unsafe trait Pins<UART> {
     const HAS_TX: bool;
     const HAS_RX: bool;
