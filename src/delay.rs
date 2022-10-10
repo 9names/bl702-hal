@@ -3,6 +3,9 @@
 use core::convert::Infallible;
 use embedded_hal::delay::blocking::{DelayMs, DelayUs};
 
+use embedded_hal_zero::blocking::delay::DelayMs as DelayMsZero;
+use embedded_hal_zero::blocking::delay::DelayUs as DelayUsZero;
+
 /// Use RISCV machine-mode cycle counter (`mcycle`) as a delay provider.
 ///
 /// This can be used for high resolution delays for device initialization,
@@ -64,5 +67,21 @@ impl DelayMs<u64> for McycleDelay {
         McycleDelay::delay_cycles((ms * (self.core_frequency as u64)) / 1000);
 
         Ok(())
+    }
+}
+
+impl DelayMsZero<u64> for McycleDelay {
+    /// Performs a busy-wait loop until the number of milliseconds `ms` has elapsed
+    #[inline]
+    fn delay_ms(&mut self, ms: u64) {
+        McycleDelay::delay_cycles((ms * (self.core_frequency as u64)) / 1000);
+    }
+}
+
+impl DelayUsZero<u64> for McycleDelay {
+    /// Performs a busy-wait loop until the number of microseconds `us` has elapsed
+    #[inline]
+    fn delay_us(&mut self, ms: u64) {
+        McycleDelay::delay_cycles((ms * (self.core_frequency as u64)) / 1_000_000);
     }
 }
