@@ -4,8 +4,8 @@
 use crate::clock::Clocks;
 use crate::pac;
 use core::fmt;
-use embedded_hal::serial::nb::Read as ReadOne;
-use embedded_hal::serial::nb::Write as WriteOne;
+use embedded_hal_alpha::serial::nb::Read as ReadOne;
+use embedded_hal_alpha::serial::nb::Write as WriteOne;
 use embedded_time::rate::{Baud, Extensions};
 use nb::block;
 
@@ -238,7 +238,7 @@ where
     }
 }
 
-impl<PINS> embedded_hal::serial::nb::Write<u8> for Serial<pac::UART, PINS> {
+impl<PINS> embedded_hal_alpha::serial::nb::Write<u8> for Serial<pac::UART, PINS> {
     type Error = Error;
 
     fn write(&mut self, word: u8) -> nb::Result<(), Self::Error> {
@@ -265,7 +265,7 @@ impl<PINS> embedded_hal::serial::nb::Write<u8> for Serial<pac::UART, PINS> {
     }
 }
 
-impl<PINS> embedded_hal::serial::nb::Read<u8> for Serial<pac::UART, PINS> {
+impl<PINS> embedded_hal_alpha::serial::nb::Read<u8> for Serial<pac::UART, PINS> {
     type Error = Error;
 
     fn read(&mut self) -> nb::Result<u8, Self::Error> {
@@ -278,7 +278,7 @@ impl<PINS> embedded_hal::serial::nb::Read<u8> for Serial<pac::UART, PINS> {
     }
 }
 
-impl<PINS> embedded_hal_zero::serial::Write<u8> for Serial<pac::UART, PINS> {
+impl<PINS> embedded_hal::serial::Write<u8> for Serial<pac::UART, PINS> {
     type Error = Error;
 
     fn write(&mut self, word: u8) -> nb::Result<(), Self::Error> {
@@ -290,7 +290,7 @@ impl<PINS> embedded_hal_zero::serial::Write<u8> for Serial<pac::UART, PINS> {
     }
 }
 
-impl<PINS> embedded_hal_zero::serial::Read<u8> for Serial<pac::UART, PINS> {
+impl<PINS> embedded_hal::serial::Read<u8> for Serial<pac::UART, PINS> {
     type Error = Error;
 
     fn read(&mut self) -> nb::Result<u8, Self::Error> {
@@ -300,7 +300,7 @@ impl<PINS> embedded_hal_zero::serial::Read<u8> for Serial<pac::UART, PINS> {
 
 impl<UART, PINS> fmt::Write for Serial<UART, PINS>
 where
-    Serial<UART, PINS>: embedded_hal::serial::nb::Write<u8>,
+    Serial<UART, PINS>: embedded_hal_alpha::serial::nb::Write<u8>,
 {
     fn write_str(&mut self, s: &str) -> fmt::Result {
         s.as_bytes()
