@@ -47,9 +47,6 @@ fn main() -> ! {
         clocks,
     );
 
-    // Create a blocking delay function based on the current cpu frequency
-    let mut d = bl702_hal::delay::McycleDelay::new(bl702_hal::SYSFREQ);
-
     loop {
         let r = serial.read();
         if let Ok(r) = r {
