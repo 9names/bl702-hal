@@ -2,9 +2,7 @@
 #![no_main]
 
 use bl702_hal::{
-    self as hal,
-    clock::{board_clock_init, system_init, ClockConfig, SysclkFreq, UART_PLL_FREQ},
-    delay::McycleDelay,
+    clock::{board_clock_init, system_init, ClockConfig},
     pac,
     prelude::*,
     uart::*,
@@ -50,7 +48,8 @@ fn main() -> ! {
     loop {
         let r = serial.read();
         if let Ok(r) = r {
-            serial.write_char(r as char);
+            // ignore write errors for this example
+            let _ = serial.write_char(r as char);
         }
     }
 }
