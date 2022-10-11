@@ -2,18 +2,16 @@
 #![no_main]
 
 use bl702_hal::{
-    self as hal,
-    clock::{board_clock_init, system_init, ClockConfig, SysclkFreq, UART_PLL_FREQ},
-    delay::McycleDelay,
+    clock::{board_clock_init, system_init, ClockConfig},
     pac,
     prelude::*,
     uart::*,
 };
 use core::fmt::Write;
-use embedded_hal::delay::blocking::DelayMs;
-use embedded_hal_zero::serial::Read;
+use embedded_hal::serial::Read;
+use embedded_hal_alpha::delay::blocking::DelayMs;
 
-use embedded_hal::digital::blocking::OutputPin;
+use embedded_hal_alpha::digital::blocking::OutputPin;
 use panic_halt as _;
 
 #[riscv_rt::entry]
@@ -47,13 +45,11 @@ fn main() -> ! {
         clocks,
     );
 
-    // Create a blocking delay function based on the current cpu frequency
-    let mut d = bl702_hal::delay::McycleDelay::new(bl702_hal::SYSFREQ);
-
     loop {
         let r = serial.read();
         if let Ok(r) = r {
-            serial.write_char(r as char);
+            // ignore write errors for this example
+            let _ = serial.write_char(r as char);
         }
     }
 }

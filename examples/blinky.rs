@@ -2,7 +2,7 @@
 #![no_main]
 
 use bl702_hal as hal;
-use embedded_hal::digital::blocking::OutputPin;
+use embedded_hal_alpha::digital::blocking::OutputPin;
 use hal::{
     clock::{board_clock_init, system_init, ClockConfig},
     delay::McycleDelay,
@@ -11,7 +11,7 @@ use hal::{
 };
 use panic_halt as _;
 
-use embedded_hal::delay::blocking::DelayMs;
+use embedded_hal_alpha::delay::blocking::DelayMs;
 
 #[riscv_rt::entry]
 fn main() -> ! {

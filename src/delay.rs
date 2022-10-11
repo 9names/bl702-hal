@@ -1,10 +1,10 @@
 //! Delays
 
 use core::convert::Infallible;
-use embedded_hal::delay::blocking::{DelayMs, DelayUs};
+use embedded_hal_alpha::delay::blocking::{DelayMs, DelayUs};
 
-use embedded_hal_zero::blocking::delay::DelayMs as DelayMsZero;
-use embedded_hal_zero::blocking::delay::DelayUs as DelayUsZero;
+use embedded_hal::blocking::delay::DelayMs as DelayMsZero;
+use embedded_hal::blocking::delay::DelayUs as DelayUsZero;
 
 /// Use RISCV machine-mode cycle counter (`mcycle`) as a delay provider.
 ///
