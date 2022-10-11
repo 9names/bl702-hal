@@ -10,10 +10,10 @@ use bl702_hal::{
     uart::*,
 };
 use core::fmt::Write;
-use embedded_hal::delay::blocking::DelayMs;
-use embedded_hal_zero::serial::Read;
+use embedded_hal::serial::Read;
+use embedded_hal_alpha::delay::blocking::DelayMs;
 
-use embedded_hal::digital::blocking::OutputPin;
+use embedded_hal_alpha::digital::blocking::OutputPin;
 use panic_halt as _;
 
 #[riscv_rt::entry]
