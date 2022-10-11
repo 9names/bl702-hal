@@ -2,18 +2,15 @@
 #![no_main]
 
 use bl702_hal::{
-    self as hal,
-    clock::{board_clock_init, system_init, ClockConfig, SysclkFreq, UART_PLL_FREQ},
-    delay::McycleDelay,
+    clock::{board_clock_init, system_init, ClockConfig},
     pac,
     prelude::*,
     uart::*,
 };
 use core::fmt::Write;
-use embedded_hal::delay::blocking::DelayMs;
-use embedded_hal_zero::serial::Read;
+use embedded_hal_alpha::delay::blocking::DelayMs;
 
-use embedded_hal::digital::blocking::OutputPin;
+use embedded_hal_alpha::digital::blocking::OutputPin;
 use panic_halt as _;
 
 #[riscv_rt::entry]
@@ -51,12 +48,10 @@ fn main() -> ! {
     let mut d = bl702_hal::delay::McycleDelay::new(bl702_hal::SYSFREQ);
 
     let hello = "hello rust!\r\n";
-    let mut i = 0;
     loop {
         d.delay_ms(100).unwrap();
-        i += 1;
         let t = serial.write_str(hello);
-        let x = match t {
+        let _ = match t {
             Ok(_) => led.set_high().unwrap(),
             Err(_) => led.set_low().unwrap(),
         };

@@ -280,8 +280,8 @@ macro_rules! impl_glb {
         pub mod pin {
             use core::marker::PhantomData;
             use core::convert::Infallible;
-            use embedded_hal::digital::blocking::{InputPin, OutputPin, StatefulOutputPin, ToggleableOutputPin};
-            use embedded_hal_zero::digital::v2::{
+            use embedded_hal_alpha::digital::blocking::{InputPin, OutputPin, StatefulOutputPin, ToggleableOutputPin};
+            use embedded_hal::digital::v2::{
                 InputPin as InputPinZero,
                 OutputPin as OutputPinZero,
                 StatefulOutputPin as StatefulOutputPinZero,
