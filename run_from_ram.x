@@ -1,8 +1,7 @@
 MEMORY
 {
     ROM       (rx)    : ORIGIN = 0x21000000, LENGTH = 128K
-    CACHE     (wxa)   : ORIGIN = 0x42010000, LENGTH = 4K
-    TCM_OCRAM (wxa)   : ORIGIN = 0x42011000, LENGTH = 124K
+    TCM_OCRAM (wxa)   : ORIGIN = 0x42014000, LENGTH = 112K
     FLASH     (rxa!w) : ORIGIN = 0x23000000, LENGTH = 2M
     HBNRAM    (wxa)   : ORIGIN = 0x40010000, LENGTH = 4K
 }
