@@ -28,7 +28,7 @@ Serial demo
 ```system
 cargo objcopy --release --example serial -- -O binary serial.bin
 bflb-mcu-tool --chipname bl702 --firmware serial.bin
-picocom --lower-rts --lower-dtr /dev/ttyUSB0 -b 2000000
+picocom --lower-rts --lower-dtr --imap lfcrlf /dev/ttyUSB0 -b 2000000
 ```
 
 ## Contributing

@@ -25,4 +25,7 @@ panic-halt = "0.2.0"
 riscv-target = "0.1.2"
 
 [features]
+default = ["panic_serial", "print_serial"]
 ramexec = []
+panic_serial = []
+print_serial = []
