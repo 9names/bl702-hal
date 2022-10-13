@@ -390,3 +390,79 @@ where
     const HAS_RTS: bool = true;
     const HAS_CTS: bool = true;
 }
+
+#[cfg(feature = "print_serial")]
+#[derive(Debug)]
+pub struct LoggerToken {}
+
+#[cfg(feature = "print_serial")]
+impl LoggerToken {
+    fn write(&mut self, word: u8) {
+        let uart = unsafe { &*pac::UART::ptr() };
+        // Block until theres room to write a byte or more to the FIFO
+        while uart.uart_fifo_config_1.read().tx_fifo_cnt().bits() == 0 {}
+        uart.uart_fifo_wdata
+            .write(|w| unsafe { w.bits(word as u32) });
+    }
+}
+
+#[cfg(feature = "print_serial")]
+impl fmt::Write for LoggerToken {
+    fn write_str(&mut self, s: &str) -> fmt::Result {
+        s.as_bytes().iter().for_each(|c| (self.write(*c)));
+        Ok(())
+    }
+}
+
+#[cfg(feature = "print_serial")]
+pub mod serial_logger {
+    use crate::gpio::{
+        pin::Pin14,
+        pin::Pin15,
+        uart_sig::{Uart0Rx, Uart0Tx, UartMux6, UartMux7},
+        Uart,
+    };
+    use bl702_pac::UART;
+
+    use super::{LoggerToken, Serial};
+    pub type LoggerUart = Serial<
+        UART,
+        (
+            (Pin14<Uart>, UartMux6<Uart0Tx>),
+            (Pin15<Uart>, UartMux7<Uart0Rx>),
+        ),
+    >;
+    pub static mut GLOBAL_SERIAL: Option<LoggerToken> = None;
+
+    pub fn init(_serial: LoggerUart) {
+        riscv::interrupt::free(|_cs| {
+            // statics not working? avoiding for now
+            unsafe {
+                let _ = GLOBAL_SERIAL.insert(LoggerToken {});
+            }
+        })
+    }
+
+    #[macro_export]
+    macro_rules! serial_println {
+        ($($arg:tt)*) => {
+            ::riscv::interrupt::free(|_cs| {
+                // if unsafe { bl702_hal::uart::serial_logger::GLOBAL_SERIAL.is_some() } {
+                    let mut serial = LoggerToken {};
+                    writeln!(serial, $($arg)*)
+                // }
+            })
+        }
+    }
+}
+
+#[cfg(feature = "panic_serial")]
+#[panic_handler]
+fn panic(info: &core::panic::PanicInfo) -> ! {
+    use crate::serial_println;
+    use core::fmt::Write;
+    riscv::interrupt::free(|_cs| {
+        let _ = serial_println!("panic: {:?}", info);
+    });
+    loop {}
+}
