@@ -3,11 +3,17 @@
 //! Only supports UART0. Only supports 2MBaud.
 use crate::clock::Clocks;
 use crate::pac;
+
 use core::fmt;
 use embedded_hal_alpha::serial::nb::Read as ReadOne;
 use embedded_hal_alpha::serial::nb::Write as WriteOne;
 use embedded_time::rate::{Baud, Extensions};
 use nb::block;
+
+#[cfg(feature = "print_serial")]
+use core::convert::Infallible;
+#[cfg(feature = "print_serial")]
+use ufmt::uwriteln;
 
 /// UART error
 #[derive(Debug)]
@@ -415,6 +421,18 @@ impl fmt::Write for LoggerToken {
 }
 
 #[cfg(feature = "print_serial")]
+use ufmt_write::uWrite;
+
+#[cfg(feature = "print_serial")]
+impl uWrite for LoggerToken {
+    type Error = Infallible;
+    fn write_str(&mut self, s: &str) -> Result<(), Self::Error> {
+        s.as_bytes().iter().for_each(|c| (self.write(*c)));
+        Ok(())
+    }
+}
+
+#[cfg(feature = "print_serial")]
 pub mod serial_logger {
     use crate::gpio::{
         pin::Pin14,
@@ -450,6 +468,18 @@ pub mod serial_logger {
                 // if unsafe { bl702_hal::uart::serial_logger::GLOBAL_SERIAL.is_some() } {
                     let mut serial = LoggerToken {};
                     writeln!(serial, $($arg)*)
+                // }
+            })
+        }
+    }
+
+    #[macro_export]
+    macro_rules! serial_uprintln {
+        ($($arg:tt)*) => {
+            ::riscv::interrupt::free(|_cs| {
+                // if unsafe { bl702_hal::uart::serial_logger::GLOBAL_SERIAL.is_some() } {
+                    let mut serial = LoggerToken {};
+                    uwriteln!(serial, $($arg)*)
                 // }
             })
         }
