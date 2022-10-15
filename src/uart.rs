@@ -462,7 +462,7 @@ fn panic(info: &core::panic::PanicInfo) -> ! {
     use crate::serial_println;
     use core::fmt::Write;
     riscv::interrupt::free(|_cs| {
-        let _ = serial_println!("panic: {:?}", info);
+        let _ = serial_println!("panic: {}", info);
     });
     loop {}
 }
