@@ -9,6 +9,7 @@ use hal::{
     pac,
     prelude::*,
 };
+#[cfg(not(feature = "panic_serial"))]
 use panic_halt as _;
 
 use embedded_hal_alpha::delay::blocking::DelayMs;

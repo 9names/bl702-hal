@@ -11,6 +11,7 @@ use core::fmt::Write;
 use embedded_hal_alpha::delay::blocking::DelayMs;
 
 use embedded_hal_alpha::digital::blocking::OutputPin;
+#[cfg(not(feature = "panic_serial"))]
 use panic_halt as _;
 
 #[riscv_rt::entry]
