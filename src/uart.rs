@@ -453,7 +453,7 @@ pub mod serial_logger {
     pub static mut GLOBAL_SERIAL: Option<LoggerToken> = None;
 
     pub fn init(_serial: LoggerUart) {
-        riscv::interrupt::free(|_cs| {
+        riscv::interrupt::free(|| {
             // statics not working? avoiding for now
             unsafe {
                 let _ = GLOBAL_SERIAL.insert(LoggerToken {});
@@ -464,7 +464,7 @@ pub mod serial_logger {
     #[macro_export]
     macro_rules! serial_println {
         ($($arg:tt)*) => {
-            ::riscv::interrupt::free(|_cs| {
+            ::riscv::interrupt::free(|| {
                 // if unsafe { bl702_hal::uart::serial_logger::GLOBAL_SERIAL.is_some() } {
                     let mut serial = LoggerToken {};
                     writeln!(serial, $($arg)*)
@@ -476,7 +476,7 @@ pub mod serial_logger {
     #[macro_export]
     macro_rules! serial_uprintln {
         ($($arg:tt)*) => {
-            ::riscv::interrupt::free(|_cs| {
+            ::riscv::interrupt::free(|| {
                 // if unsafe { bl702_hal::uart::serial_logger::GLOBAL_SERIAL.is_some() } {
                     let mut serial = LoggerToken {};
                     uwriteln!(serial, $($arg)*)
@@ -491,7 +491,7 @@ pub mod serial_logger {
 fn panic(info: &core::panic::PanicInfo) -> ! {
     use crate::serial_println;
     use core::fmt::Write;
-    riscv::interrupt::free(|_cs| {
+    riscv::interrupt::free(|| {
         let _ = serial_println!("panic: {}", info);
     });
     loop {}
