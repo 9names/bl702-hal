@@ -22,6 +22,8 @@ ufmt-write = { version = "0.1", optional = true }
 [dev-dependencies]
 riscv-rt = "0.10.0"
 panic-halt = "0.2.0"
+st7735-lcd = "0.7"
+embedded-graphics = "0.6.0"
 
 [build-dependencies]
 riscv-target = "0.1.2"

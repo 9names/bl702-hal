@@ -52,6 +52,7 @@ pub enum SysclkFreq {
 pub struct Clocks {
     sysclk: Hertz,
     uart_clk: Hertz,
+    spi_clk: Hertz,
 }
 
 impl Clocks {
@@ -59,6 +60,7 @@ impl Clocks {
         Clocks {
             sysclk: Hertz(SYSFREQ),
             uart_clk: Hertz(UART_PLL_FREQ),
+            spi_clk: Hertz(SYSFREQ / 4),
         }
     }
 
@@ -68,6 +70,10 @@ impl Clocks {
 
     pub const fn uart_clk(&self) -> Hertz {
         self.uart_clk
+    }
+
+    pub const fn spi_clk(&self) -> Hertz {
+        self.spi_clk
     }
 }
 
@@ -95,6 +101,7 @@ impl ClockConfig {
         let pll_enabled = true;
         let sysclk = self.sysclk;
         let uart_clk_div = 1; // leave uart clock at 96mhz
+        let spi_clk_div = 4;
 
         unsafe { hbn::ptr() }
             .hbn_glb
@@ -108,9 +115,19 @@ impl ClockConfig {
                 .set_bit()
         });
 
+        unsafe { glb::ptr() }.clk_cfg3.modify(|_, w| unsafe {
+            w.spi_clk_div()
+                .bits(spi_clk_div - 1_u8)
+                .spi_clk_en()
+                .set_bit()
+        });
+
+        let spi_clk = system_clock_get(system_clock_type::SYSTEM_CLOCK_BCLK) / spi_clk_div as u32;
+
         Clocks {
             sysclk: Hertz(sysclk as u32),
             uart_clk: Hertz(UART_PLL_FREQ),
+            spi_clk: Hertz(spi_clk),
         }
     }
 }
@@ -160,7 +177,7 @@ pub fn peripheral_clock_init() {
         glb::ptr().cgen_cfg1.modify(|_, w| {
             w.uart0().set_bit();
             w.uart1().set_bit();
-            w
+            w.spi().set_bit()
         });
     }
 }
