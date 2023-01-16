@@ -24,16 +24,16 @@ fn main() -> ! {
     let mut parts = dp.GLB.split();
     let clocks = ClockConfig::new().freeze(&mut parts.clk_cfg);
 
-    let mut gpio17 = parts.pin17.into_pull_up_output();
+    let mut led = parts.pin17.into_pull_up_output();
 
     // Create a blocking delay function based on the current cpu frequency
     let mut d = McycleDelay::new(clocks.sysclk().0);
 
     loop {
-        gpio17.set_high().unwrap();
+        led.set_high().unwrap();
         d.delay_ms(1000).unwrap();
 
-        gpio17.set_low().unwrap();
+        led.set_low().unwrap();
         d.delay_ms(1000).unwrap();
     }
 }
