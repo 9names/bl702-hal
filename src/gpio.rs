@@ -353,11 +353,11 @@ macro_rules! impl_glb {
 
                         glb.$gpio_cfgctli.modify(|_r, w| unsafe { w
                             .[<reg_ $gpio_i _func_sel>]().bits(mode)
-                            .[<reg_ $gpio_i _ie>]().bit(ie) // output
-                            .[<reg_ $gpio_i _pu>]().bit(pu)
                             .[<reg_ $gpio_i _pd>]().bit(pd)
-                            .[<reg_ $gpio_i _drv>]().bits(0) // disabled
-                            .[<reg_ $gpio_i _smt>]().clear_bit()
+                            .[<reg_ $gpio_i _pu>]().bit(pu)
+                            .[<reg_ $gpio_i _drv>]().bits(0) // lowest drive level
+                            .[<reg_ $gpio_i _smt>]().set_bit()
+                            .[<reg_ $gpio_i _ie>]().set_bit() // keep input buffer active, github issue #8
                         });
 
                         // If we're an input clear the Output Enable bit as well, else set it.
