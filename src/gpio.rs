@@ -236,6 +236,9 @@ pub struct Spi;
 /// I2C pin mode (type state)
 pub struct I2c;
 
+/// Analog mode (type state)
+pub struct Analog;
+
 #[doc(hidden)]
 pub trait UartPin<SIG> {}
 
@@ -405,6 +408,10 @@ macro_rules! impl_glb {
                         // 6 -> GPIO_FUN_I2C_x
                         self.into_pin_with_mode(6, true, false, true)
                     }
+                }
+                /// Configures the pin to ADC alternate mode
+                pub fn into_analog(self) -> $Pini<Analog> {
+                    self.into_pin_with_mode(10, false, false, false)
                 }
             }
 
