@@ -78,6 +78,14 @@ impl DelayMsZero<u64> for McycleDelay {
     }
 }
 
+impl DelayMsZero<u8> for McycleDelay {
+    /// Performs a busy-wait loop until the number of milliseconds `ms` has elapsed
+    #[inline]
+    fn delay_ms(&mut self, ms: u8) {
+        McycleDelay::delay_cycles((ms as u64 * (self.core_frequency as u64)) / 1000);
+    }
+}
+
 impl DelayUsZero<u64> for McycleDelay {
     /// Performs a busy-wait loop until the number of microseconds `us` has elapsed
     #[inline]

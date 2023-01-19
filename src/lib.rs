@@ -36,6 +36,7 @@ pub use bl702_pac as pac;
 pub mod clock;
 pub mod delay;
 pub mod gpio;
+pub mod spi;
 pub mod prelude {
     pub use crate::gpio::GlbExt as _bl702_hal_gpio_GlbExt;
     pub use embedded_time::rate::Extensions;
