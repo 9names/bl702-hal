@@ -53,18 +53,23 @@ pub enum SpiBitFormat {
     MsbFirst,
 }
 
+#[allow(clippy::missing_safety_doc)]
 /// MISO pins - DO NOT IMPLEMENT THIS TRAIT
 pub unsafe trait MisoPin<SPI> {}
 
+#[allow(clippy::missing_safety_doc)]
 /// MOSI pins - DO NOT IMPLEMENT THIS TRAIT
 pub unsafe trait MosiPin<SPI> {}
 
+#[allow(clippy::missing_safety_doc)]
 /// SS pins - DO NOT IMPLEMENT THIS TRAIT
 pub unsafe trait SsPin<SPI> {}
 
+#[allow(clippy::missing_safety_doc)]
 /// SCLK pins - DO NOT IMPLEMENT THIS TRAIT
 pub unsafe trait SclkPin<SPI> {}
 
+#[allow(clippy::missing_safety_doc)]
 /// Spi pins - DO NOT IMPLEMENT THIS TRAIT
 pub unsafe trait Pins<SPI> {}
 
