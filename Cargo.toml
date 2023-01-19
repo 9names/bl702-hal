@@ -11,7 +11,7 @@ description = "HAL for the Bouffalo Lab BL702 microcontroller family"
 [dependencies]
 bl702-pac = "0.0.2"
 embedded-time = "0.12.0"
-riscv = "0.10.0"
+riscv = "0.10.1"
 nb = "1.0"
 paste = "1.0"
 embedded-hal = { version = "0.2.7", features = ["unproven"] }
@@ -20,7 +20,7 @@ ufmt = { version = "0.2", optional = true }
 ufmt-write = { version = "0.1", optional = true }
 
 [dev-dependencies]
-riscv-rt = "0.10.0"
+riscv-rt = "0.11.0"
 panic-halt = "0.2.0"
 st7735-lcd = "0.7"
 embedded-graphics = "0.6.0"
