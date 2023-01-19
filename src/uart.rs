@@ -12,8 +12,6 @@ use nb::block;
 
 #[cfg(feature = "print_serial")]
 use core::convert::Infallible;
-#[cfg(feature = "print_serial")]
-use ufmt::uwriteln;
 
 /// UART error
 #[derive(Debug)]
