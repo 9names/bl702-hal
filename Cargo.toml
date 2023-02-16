@@ -9,9 +9,9 @@ repository = "https://github.com/9names/bl702-hal"
 description = "HAL for the Bouffalo Lab BL702 microcontroller family"
 
 [dependencies]
-bl702-pac = "0.0.2"
+bl702-pac = { version = "0.0.3", features = ["critical-section"] }
 embedded-time = "0.12.0"
-riscv = "0.10.1"
+riscv = { version = "0.10.1", features = ["critical-section-single-hart"] }
 nb = "1.0"
 paste = "1.0"
 embedded-hal = { version = "0.2.7", features = ["unproven"] }
@@ -21,8 +21,8 @@ ufmt-write = { version = "0.1", optional = true }
 
 [dev-dependencies]
 riscv-rt = "0.11.0"
-st7735-lcd = "0.7"
-embedded-graphics = "0.6.0"
+st7735-lcd = "0.8"
+embedded-graphics = "0.7.1"
 
 [build-dependencies]
 riscv-target = "0.1.2"

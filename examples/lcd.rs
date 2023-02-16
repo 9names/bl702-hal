@@ -12,9 +12,11 @@ use hal::{
 #[cfg(not(feature = "panic_serial"))]
 use panic_halt as _;
 
-use embedded_graphics::image::{Image, ImageRaw, ImageRawLE};
-use embedded_graphics::pixelcolor::Rgb565;
-use embedded_graphics::prelude::*;
+use embedded_graphics::{
+    image::{Image, ImageRaw, ImageRawLE},
+    pixelcolor::Rgb565,
+    prelude::*,
+};
 use st7735_lcd;
 use st7735_lcd::Orientation;
 
@@ -51,12 +53,11 @@ fn main() -> ! {
     let mut disp = st7735_lcd::ST7735::new(spi, dc, rst, false, true, 160, 80);
     disp.init(&mut d).unwrap();
     disp.set_orientation(&Orientation::Landscape).unwrap();
-    disp.set_offset(0, 25);
+    disp.set_offset(1, 26);
     disp.clear(Rgb565::BLACK).unwrap();
 
-    let image_raw: ImageRawLE<Rgb565> =
-        ImageRaw::new(include_bytes!("../assets/ferris.raw"), 86, 64);
-    let image: Image<_, Rgb565> = Image::new(&image_raw, Point::new(34, 8));
+    let image_raw: ImageRawLE<Rgb565> = ImageRaw::new(include_bytes!("../assets/ferris.raw"), 86);
+    let image: Image<ImageRawLE<Rgb565>> = Image::new(&image_raw, Point::new(34, 8));
     image.draw(&mut disp).unwrap();
 
     loop {}
