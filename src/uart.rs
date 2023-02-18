@@ -7,7 +7,7 @@ use crate::pac;
 use core::fmt;
 use embedded_hal_alpha::serial::nb::Read as ReadOne;
 use embedded_hal_alpha::serial::nb::Write as WriteOne;
-use embedded_time::rate::{Baud, Extensions};
+use embedded_time::rate::{Baud, Extensions, *};
 use nb::block;
 
 #[cfg(feature = "print_serial")]
@@ -160,11 +160,11 @@ where
 {
     // todo: there is UART0 and UART1
     // todo: use clocks
-    pub fn uart0(uart: pac::UART, config: Config, pins: PINS, _clocks: Clocks) -> Self {
+    pub fn uart0(uart: pac::UART, config: Config, pins: PINS, clocks: Clocks) -> Self {
         // Initialize clocks and baudrate
-        // let uart_clk = clocks.uart_clk();
-        // let mut baud = config.baudrate.0;
-        let divisor = 48; // bring uart down from 96MHz to 2Mhz
+        let uart_clk: u32 = clocks.uart_clk().integer();
+        let baud = config.baudrate.0;
+        let divisor = (uart_clk / baud) as u16; // bring uart down from 96MHz to config baud
 
         // Disable uart first
         uart.utx_config.modify(|_, w| w.cr_utx_en().clear_bit());

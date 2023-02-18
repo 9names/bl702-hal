@@ -41,6 +41,7 @@ pub mod prelude {
     pub use crate::gpio::GlbExt as _bl702_hal_gpio_GlbExt;
     pub use embedded_time::rate::Extensions;
 }
+pub mod adc;
 pub mod system;
 pub mod uart;
 
